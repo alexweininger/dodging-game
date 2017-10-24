@@ -1,6 +1,3 @@
-var playAreaWidth = 480;
-var playAreaHeight = 480;
-
 var canvasWidth = 680;
 var canvasHeight = 680;
 
@@ -16,30 +13,23 @@ var ctx = canvas.getContext("2d");
 
 
 //ball constants
+var ballRadius = 25; // radius
 
-var ballRadius = 25;
+var x = (canvas.width / 2); // initial position x
+var y = (canvas.height / 2); // initial position y
 
-var x = (canvas.width / 2);
-var y = (canvas.height / 2);
+var gridX = 3; //  initial grid position x
+var gridY = 3; // initial grid position y
 
+var gridSize = 5; // gridSize (width and height) how many spaces
 
-var gridX = 3;
-var gridY = 3;
+var tileSize = ((canvas.width - (canvasPad / 2)) / gridSize); // var that calculates the tile size based on the canvas and the pad
 
-//game vars
-var gameSpeed = 3;
-
-rightPressed = false;
-leftPressed = false;
-downPressed = false;
-upPressed = false;
-
-var gameTime = 0;
-var gridSize = 5;
-
-
-
-var tileSize = ((canvas.width - (canvasPad / 2)) / gridSize);
+// key and movement vars
+var rightPressed = false;
+var leftPressed = false;
+var downPressed = false;
+var upPressed = false;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -65,7 +55,6 @@ function keyDownHandler(e) {
     }
 
 }
-
 function keyUpHandler(e) {
 
     if (e.keyCode == 39) {
@@ -130,7 +119,10 @@ function moveUp() { // up
     }
 }
 
-function drawCheckeredBackground(can, nRow, nCol) {
+// initializing the playing area (canvas)
+
+// function to draw the checkerd background on the canvas
+function drawCheckeredBackground(can, nRow, nCol) { 
 
     var w = canvasWidth - (canvasPad);
     var h = canvasHeight - (canvasPad);
@@ -153,6 +145,7 @@ function drawCheckeredBackground(can, nRow, nCol) {
     ctx.fill();
 }
 
+// drawing the ball
 function drawBall() {
     ctx.beginPath();
     ctx.fillStyle = "pink";
@@ -162,6 +155,7 @@ function drawBall() {
     ctx.closePath();
 }
 
+// drawing the pad
 function drawPad() {
     ctx.beginPath();
     ctx.fillStyle = "#eee";
@@ -398,7 +392,7 @@ function newObs(location, velocity) {
 
         vX = vX;
         vY = 0;
-        
+
     } else if (side == 4) {
         x = 0;
         y = (tileSize / 2) + ((pad - 1) * tileSize);
@@ -414,7 +408,7 @@ function newObs(location, velocity) {
 }
 
 class Obstacle {
-    constructor(x, y, vX, vY){
+    constructor(x, y, vX, vY) {
         this.x = x;
         this.y = y;
         this.vX = vX;
@@ -428,11 +422,11 @@ class Obstacle {
 
 
 
-function drawObs(x, y, vX, vY){
+function drawObs(x, y, vX, vY) {
 
 }
 
-function clearCanvas(){
+function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
