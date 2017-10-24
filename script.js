@@ -10,8 +10,6 @@ canvas.height = canvasHeight;
 
 var ctx = canvas.getContext("2d");
 
-
-
 //ball constants
 var ballRadius = 25; // radius
 
@@ -360,7 +358,14 @@ function checkWall() {
     }
 }
 
-// time stuff
+class projectile{
+    constructor(x, y, vX, vY){
+        this.x = x;
+        this.y = y;
+        this.vX = vX;
+        this.vY = vY;
+    }
+}
 
 function newObs(location, velocity) {
     var l = location;
@@ -415,12 +420,6 @@ class Obstacle {
         this.vY = vY;
     }
 }
-
-
-
-
-
-
 
 function drawObs(x, y, vX, vY) {
 
