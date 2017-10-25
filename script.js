@@ -120,7 +120,7 @@ function moveUp() { // up
 // initializing the playing area (canvas)
 
 // function to draw the checkerd background on the canvas
-function drawCheckeredBackground(can, nRow, nCol) { 
+function drawCheckeredBackground(can, nRow, nCol) {
 
     var w = canvasWidth - (canvasPad);
     var h = canvasHeight - (canvasPad);
@@ -358,13 +358,39 @@ function checkWall() {
     }
 }
 
-class projectile{
-    constructor(x, y, vX, vY){
-        this.x = x;
-        this.y = y;
-        this.vX = vX;
-        this.vY = vY;
+// obstacle Object function
+function Obstacle(x, y, vX, vY) {
+    this.x = x;
+    this.y = y;
+    this.vX = vX;
+    this.vY = vY;
+}
+
+var obs = []; // array of obstacles
+
+function addObstacle(x, y, vX, vY) {
+    var n = obs.length;
+    obs[obs.length] = new Obstacle();
+    obs[n].x = x;
+    obs[n].y = y;
+    obs[n].vX = vX;
+    obs[n].vY = vY;
+}
+
+for (i = 0; i < obs.length; i++) {
+    if (obs[i].x < -100) {
+        obs.splice(i, 1);
+    } else if (obs[i].x > canvas.width + 100) {
+        obs.splice(i, 1);
+    } else if (obs[i].y < -100) {
+        obs.splice(i, 1);
+    } else if (obs[i].y > canvas.width + 100) {
+        obs.splice(i, 1);
+    } else {
+        console.log(obs[i]);
     }
+
+
 }
 
 function newObs(location, velocity) {
@@ -393,7 +419,7 @@ function newObs(location, velocity) {
         vY = 0;
     } else if (side == 3) {
         y = canvas.height - canvasPad;
-        x = (tileSize / 2) + ((pad - 1) * tileSize);
+        x = canvas.width - (tileSize / 2) + ((pad - 1) * tileSize);
 
         vX = vX;
         vY = 0;
@@ -406,23 +432,20 @@ function newObs(location, velocity) {
         vY = 0;
     }
 
-    ctx.beginPath();
-    ctx.rect(x, y, 20, 20)
-    ctx.fill();
-    ctx.closePath();
+    addObstacle(x, y, vX, vY);
 }
 
-class Obstacle {
-    constructor(x, y, vX, vY) {
-        this.x = x;
-        this.y = y;
-        this.vX = vX;
-        this.vY = vY;
+function drawObs() {
+    for (i = 0; i < obs.length; i++) {
+        vX = obs[i].vX;
+        vY = obs[i].vY;
+
+        ctx.beginPath();
+        ctx.rect(obs[i].x, obs[i].y, 20, 20);
+        ctx.fillStyle = "#eee";
+        ctx.fill();
+        ctx.closePath();
     }
-}
-
-function drawObs(x, y, vX, vY) {
-
 }
 
 function clearCanvas() {
@@ -457,11 +480,26 @@ function draw() { // draw function
 
     drawPad();
 
-    newObs(1);
-    newObs(6);
-    newObs(15);
-    newObs(19);
+    newObs(11, 10);
+    newObs(13, 10);
 
+    for (i = 0; i < obs.length; i++) {
+        var vX, vY;
+        for (i = 0; i < obs.length; i++) {
+            console.log(obs[i].x);
+            console.log(obs[i].y);
+            console.log(vX);
+            console.log(vY);
+
+            vX = obs[i].vX;
+            vY = obs[i].vY;
+
+            obs[i].x = obs[i].x + vX;
+            obs[i].y = obs[i].y + vY;
+        }
+    }
+
+    drawObs();
     requestAnimationFrame(draw);
 }
 draw();
