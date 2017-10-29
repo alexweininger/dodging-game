@@ -29,6 +29,8 @@ var leftPressed = false;
 var downPressed = false;
 var upPressed = false;
 
+var obsSize = 30;
+
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -130,8 +132,8 @@ function drawCheckeredBackground(can, nRow, nCol) {
 
     w /= nCol; // width of a block
     h /= nRow; // height of a block
-
-
+    ctx.beginPath();
+    ctx.fillStyle = "#eee";
     for (var i = 0; i < nRow; ++i) {
 
         for (var j = 0, col = nCol / 2; j < col; ++j) {
@@ -139,8 +141,8 @@ function drawCheckeredBackground(can, nRow, nCol) {
             ctx.rect((2 * j * w + (i % 2 ? 0 : w)) + (canvasPad / 2), (i * h) + (canvasPad / 2), w, h);
         }
     }
-    ctx.fillStyle = "#eee";
     ctx.fill();
+    ctx.closePath();
 }
 
 // drawing the ball
@@ -156,13 +158,14 @@ function drawBall() {
 // drawing the pad
 function drawPad() {
     ctx.beginPath();
-    ctx.fillStyle = "#eee";
+    ctx.fillStyle = "#a6a6a6";
     ctx.rect(0, 0, canvasPad / 2, canvas.height); // left
     ctx.rect(0, canvas.height - canvasPad / 2, canvas.width, canvasPad / 2); // bottom
     ctx.rect(canvas.width - (canvasPad / 2), 0, (canvasPad / 2), canvas.height); // right
     ctx.rect(0, 0, canvas.width, (canvasPad / 2)); // top
+    ctx.fill();
     ctx.closePath();
-    // console.log("drawPad");
+    //console.log("drawPad");
 }
 
 var warningSize = (canvas.width - canvasPad) / gridSize;
@@ -274,8 +277,22 @@ function paddingLoc(pad) {
     return loc;
 }
 
-function drawWarning(pad) {
+function Warning(pad, time) {
+    this.pad = pad;
+    this.time = time;
+}
 
+
+var warnings = [];
+
+function addWarning(pad, time) {
+    var n = warnings.length;
+    warnings[n] = new Warning();
+    warnings[n].pad = pad;
+    warnings[n].time = time;
+}
+
+function drawWarning(pad, time) {
     var x = pad / gridSize;
 
     var padSide;
@@ -333,19 +350,19 @@ function drawWarning(pad) {
     }
 
     ctx.beginPath();
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "#e56d67";
     ctx.rect(padX, padY, w, h);
     ctx.fill();
     ctx.closePath();
 }
 
-function drawWarningPad() {
-    ctx.benginPath();
-    ctx.rect(x, y, w, h);
-    ctx.fillStyle = "red";
-    ctx.fill();
-    ctx.closePath();
-}
+// function drawWarningPad() {
+//     ctx.benginPath();
+//     ctx.rect(x, y, w, h);
+//     ctx.fillStyle = "red";
+//     ctx.fill();
+//     ctx.closePath();
+// }
 
 
 function checkWall() {
@@ -370,27 +387,11 @@ var obs = []; // array of obstacles
 
 function addObstacle(x, y, vX, vY) {
     var n = obs.length;
-    obs[obs.length] = new Obstacle();
+    obs[n] = new Obstacle();
     obs[n].x = x;
     obs[n].y = y;
     obs[n].vX = vX;
     obs[n].vY = vY;
-}
-
-for (i = 0; i < obs.length; i++) {
-    if (obs[i].x < -100) {
-        obs.splice(i, 1);
-    } else if (obs[i].x > canvas.width + 100) {
-        obs.splice(i, 1);
-    } else if (obs[i].y < -100) {
-        obs.splice(i, 1);
-    } else if (obs[i].y > canvas.width + 100) {
-        obs.splice(i, 1);
-    } else {
-        console.log(obs[i]);
-    }
-
-
 }
 
 function newObs(location, velocity) {
@@ -406,29 +407,29 @@ function newObs(location, velocity) {
 
     if (side == 1) {
         y = 0;
-        x = (tileSize / 2) + ((pad - 1) * tileSize);
+        x = ((tileSize / 2) + ((pad - 1) * tileSize)) - obsSize / 2;
+
+        vX = 0;
+        vY = vY;
+
+    } else if (side == 2) {
+        y = ((tileSize / 2) + ((pad - 1) * tileSize)) - obsSize / 2;
+        x = canvas.width - canvasPad;
+
+        vX = vX * -1;
+        vY = 0;
+    } else if (side == 3) {
+        y = canvas.height - canvasPad;
+        x = (canvas.width - ((tileSize / 2) + ((pad - 1) * tileSize))) - obsSize / 2;
 
         vX = 0;
         vY = vY * -1;
 
-    } else if (side == 2) {
-        y = (tileSize / 2) + ((pad - 1) * tileSize);
-        x = canvas.width - canvasPad;
-
-        vX = vX;
-        vY = 0;
-    } else if (side == 3) {
-        y = canvas.height - canvasPad;
-        x = canvas.width - (tileSize / 2) + ((pad - 1) * tileSize);
-
-        vX = vX;
-        vY = 0;
-
     } else if (side == 4) {
         x = 0;
-        y = (tileSize / 2) + ((pad - 1) * tileSize);
+        y = ((tileSize / 2) + ((pad - 1) * tileSize)) - obsSize / 2;
 
-        vX = vX * -1;
+        vX = vX;
         vY = 0;
     }
 
@@ -437,12 +438,9 @@ function newObs(location, velocity) {
 
 function drawObs() {
     for (i = 0; i < obs.length; i++) {
-        vX = obs[i].vX;
-        vY = obs[i].vY;
-
         ctx.beginPath();
-        ctx.rect(obs[i].x, obs[i].y, 20, 20);
-        ctx.fillStyle = "#eee";
+        ctx.rect(obs[i].x, obs[i].y, obsSize, obsSize);
+        ctx.fillStyle = "#e56d67";
         ctx.fill();
         ctx.closePath();
     }
@@ -451,15 +449,47 @@ function drawObs() {
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+var bx, by;
+function collisionCheck() {
+    for (i = 0; i < obs.length; i++) {
+        bx = obs[i].x;
+        by = obs[i].y;
+        if (x > bx - 10 && x < bx + 10 && y > by && y < by + 20) {
+            console.log("!")
+        }
+    }
+}
 
-var a = false;
+var ran;
+
+function randomNumber() {
+    return Math.floor(Math.random() * 25) + 1;
+}
+
+var timeInterval = 1000;
+window.setInterval(function () {
+    ran = randomNumber();
+    if (warnings.length > 0) {
+        for (i = 0; i < warnings.length; i++) {
+            if (ran != warnings[i].pad) {
+                addWarning(ran, 100);
+            }
+        }
+    }else{
+        addWarning(ran, 100);
+    }
+}, timeInterval);
 
 function draw() { // draw function
 
     clearCanvas(); // clearing the canvas
     drawCheckeredBackground(myCanvas, gridSize, gridSize); // drawing the checkered background
+
     drawBall(); // draw the ball
 
+    collisionCheck();
+
+    // movement functions
     if (rightPressed) {
         moveRight();
     }
@@ -472,34 +502,47 @@ function draw() { // draw function
     if (upPressed) {
         moveUp();
     }
+    drawPad(); // draw the pad after the locators
+
 
     drawLocator(gridX);
     drawLocator(gridX + (gridSize * 2));
     drawLocator(gridY + (gridSize));
     drawLocator(gridY + (gridSize * 3));
 
-    drawPad();
+    collisionCheck();
 
-    newObs(11, 10);
-    newObs(13, 10);
-
-    for (i = 0; i < obs.length; i++) {
-        var vX, vY;
-        for (i = 0; i < obs.length; i++) {
-            console.log(obs[i].x);
-            console.log(obs[i].y);
-            console.log(vX);
-            console.log(vY);
-
-            vX = obs[i].vX;
-            vY = obs[i].vY;
-
-            obs[i].x = obs[i].x + vX;
-            obs[i].y = obs[i].y + vY;
+    for (i = 0; i < warnings.length; i++) {
+        drawWarning(warnings[i].pad, warnings[i].time);
+        warnings[i].time -= 1;
+        if (warnings[i].time < 0) {
+            
+            newObs(warnings[i].pad, 10);
+            warnings.splice(i, 1);
         }
     }
 
-    drawObs();
+    drawObs(); // draw the obstacles
+
+    // for-loop that runs through all obstacles and updates thier positions based on their velocities
+    for (i = 0; i < obs.length; i++) {
+        obs[i].x += obs[i].vX;
+        obs[i].y += obs[i].vY;
+        //console.log(obs[i])
+
+        // if statement to remove obstacles once they go off the canvas
+        if (obs[i].x < -100) {
+            obs.splice(i, 1);
+        } else if (obs[i].x > canvas.width + 100) {
+            obs.splice(i, 1);
+        } else if (obs[i].y < -100) {
+            obs.splice(i, 1);
+        } else if (obs[i].y > canvas.width + 100) {
+            obs.splice(i, 1);
+        }
+
+    }
+    collisionCheck();
     requestAnimationFrame(draw);
 }
 draw();
