@@ -1,3 +1,4 @@
+/* Background pattern from Subtle Patterns */
 var canvasWidth = 680;
 var canvasHeight = 680;
 
