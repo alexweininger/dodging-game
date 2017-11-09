@@ -484,6 +484,13 @@ window.setInterval(function () {
 function draw() { // draw function
 
     clearCanvas(); // clearing the canvas
+    
+    ctx.beginPath();
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fill();
+    ctx.closePath();
+
     drawCheckeredBackground(myCanvas, gridSize, gridSize); // drawing the checkered background
 
     drawBall(); // draw the ball
