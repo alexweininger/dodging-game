@@ -480,7 +480,12 @@ window.setInterval(function () {
         addWarning(ran, 100);
     }
 }, timeInterval);
-
+function startGame(){
+    draw();
+    console.log("Start game");
+    document.getElementById("myCanvas").style = "border: 2px solid #eee";
+    document.getElementById("startButton").style = "display: none;"
+}
 function draw() { // draw function
 
     clearCanvas(); // clearing the canvas
@@ -553,4 +558,3 @@ function draw() { // draw function
     collisionCheck();
     requestAnimationFrame(draw);
 }
-draw();
