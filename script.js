@@ -473,12 +473,17 @@ function collisionCheck() {
     }
 }
 
+let gameDifficulty = 1;
 let isGameOver = false;
 
 function updateLives() {
     document.getElementById("lives-display").innerHTML = "Lives: " + lives + "     Score: " + score;
     if (lives <= 0) {
         isGameOver = true;
+    }
+
+    if(score > 10){
+        gameDifficulty = 2;
     }
 }
 
@@ -581,8 +586,6 @@ function draw() { // draw function
         }
     }
 
-
-
     // for-loop that runs through all obstacles and updates thier positions based on their velocities
     for (i = 0; i < obs.length; i++) {
         obs[i].x += obs[i].vX;
@@ -592,19 +595,19 @@ function draw() { // draw function
         // if statement to remove obstacles once they go off the canvas
         if (obs[i].x < -100) {
             obs.splice(i, 1);
-            score+=1;
+            score += 1;
             //console.log("removed obs");
         } else if (obs[i].x > canvas.width + 100) {
             obs.splice(i, 1);
-            score+=1;
+            score += 1;
             //console.log("removed obs");
         } else if (obs[i].y < -100) {
             obs.splice(i, 1);
-            score+=1;
+            score += 1;
             //console.log("removed obs");
         } else if (obs[i].y > canvas.width + 100) {
             obs.splice(i, 1);
-            score+=1;
+            score += 1;
             //console.log("removed obs");
         }
 
