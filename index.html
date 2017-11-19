@@ -11,14 +11,18 @@
 
             padding: 0;
             margin: 0;
-            
+
         }
-        body{
+
+        body {
             background-image: url('assets/hypnotize.png');
             background-repeat: repeat;
+            padding: 15px;
         }
+
         /* canvas css */
-        .topPanel{
+
+        .topPanel {
             height: 115px;
             width: 100%;
             text-align: center;
@@ -28,24 +32,57 @@
             font-weight: 300;
             font-size: 32px;
         }
-        .leftPanel{
+
+
+        .centerPanel {
             display: inline-flex;
-            width: 20%;
+            width: 680px;
+            margin-left: 420px;
+            background: white;
+            border: solid #eee 2px;
+            
         }
-        .centerPanel{
-            display: inline-flex;
-            width: 60%;
+
+
+        #gameInfo {
+            margin: auto auto;
+            width: 680px;
+            background-color: white;
+            margin-bottom: none;
+            border: 2px solid #eee;
+            border-bottom: none;
+            height: 30px;
+            font-family: 'Roboto', sans-serif;
+            margin-left: 420px;
+            padding-top: 2px;
+            padding-bottom: none;
         }
-        .rightPanel{
-            display: inline-flex;
-            width: 20%;
-        }
+
         #myCanvas {
 
-            display: block;
+            display: inline-flex;
             margin: auto auto;
-            margin-top: 15px;
-            
+
+        }
+        #startButton{
+            font-family: 'Roboto', sans-serif;
+            background: none;
+            border: solid black 1px;
+            border-radius: 3px;
+            padding: 3px;
+        }
+        #startButton:hover{
+            background-color: black;
+            color: white;
+        }
+        p{
+            font-family: 'Roboto', sans-serif;
+        }
+        #livesDisplay{
+            display: inline-block;
+        }
+        #scoreDisplay{
+            display: inline-block;
         }
     </style>
 </head>
@@ -54,17 +91,12 @@
     <div class="topPanel">
         <p>Welcome to dodger!</p>
         <button id="startButton" onclick="startGame();">Start game</button>
-        <p>hello</p>
     </div>
-    <div class="leftPanel">
-        <p>left panel</p>
+    <div id="gameInfo">
+        <p id="lives-display"></p>
     </div>
-
     <div class="centerPanel">
         <canvas id="myCanvas" width="480" height="480"></canvas>
-    </div>
-    <div class="rightPanel">
-        <p>right panel</p>
     </div>
 </body>
 

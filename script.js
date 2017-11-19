@@ -1,4 +1,6 @@
 /* Background pattern from Subtle Patterns */
+let isGameRunning = false;
+
 var canvasWidth = 680;
 var canvasHeight = 680;
 
@@ -31,6 +33,8 @@ var downPressed = false;
 var upPressed = false;
 
 var obsSize = 30;
+
+let score = 0;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -393,7 +397,9 @@ function addObstacle(x, y, vX, vY) {
     obs[n].y = y;
     obs[n].vX = vX;
     obs[n].vY = vY;
+    console.log("added a new obstacle:" + n)
 }
+
 
 function newObs(location, velocity) {
     var l = location;
@@ -450,14 +456,29 @@ function drawObs() {
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+
+let lives = 3;
+
 var bx, by;
 function collisionCheck() {
     for (i = 0; i < obs.length; i++) {
         bx = obs[i].x;
         by = obs[i].y;
-        if (x > bx - 10 && x < bx + 10 && y > by && y < by + 20) {
-            console.log("!")
+        if (x > bx - 10 && x < bx + 20 && y > by - 10 && y < by + 20) {
+            obs.splice(i, 1);
+            console.log("Player was hit by and obstacle!")
+            lives -= 1;
+            updateLives();
         }
+    }
+}
+
+let isGameOver = false;
+
+function updateLives() {
+    document.getElementById("lives-display").innerHTML = "Lives: " + lives + "     Score: " + score;
+    if (lives <= 0) {
+        isGameOver = true;
     }
 }
 
@@ -467,29 +488,58 @@ function randomNumber() {
     return Math.floor(Math.random() * 25) + 1;
 }
 
-var timeInterval = 1000;
-window.setInterval(function () {
-    ran = randomNumber();
-    if (warnings.length > 0) {
-        for (i = 0; i < warnings.length; i++) {
-            if (ran != warnings[i].pad) {
-                addWarning(ran, 100);
-            }
-        }
-    }else{
-        addWarning(ran, 100);
-    }
-}, timeInterval);
-function startGame(){
-    draw();
+function startGame() {
+    isGameRunning = true;
     console.log("Start game");
     document.getElementById("myCanvas").style = "border: 2px solid #eee";
     document.getElementById("startButton").style = "display: none;"
+    resetVariables();
+    updateLives();
+    draw();
 }
+
+do {
+    var timeInterval = 1000;
+    window.setInterval(function () {
+        if (isGameRunning) {
+            ran = randomNumber();
+            if (warnings.length > 0) {
+                for (i = 0; i < warnings.length; i++) {
+                    if (ran != warnings[i].pad) {
+                        addWarning(ran, 100);
+                        console.log("add warning" + ran);
+                    }
+                }
+            } else {
+                addWarning(ran, 100);
+                console.log("add warning" + ran);
+            }
+        }
+    }, timeInterval);
+} while (isGameRunning);
+function resetVariables() {
+    lives = 3;
+    isGameOver = false;
+    gridX = 3;
+    gridY = 3;
+    x = (canvas.width / 2); // initial position x
+    y = (canvas.height / 2); // initial position y
+    obs = [];
+    warnings = [];
+
+}
+
+function gameOver() {
+    isGameRunning = false;
+    console.log("Game over.")
+    document.getElementById("startButton").style = "display: unset";
+
+}
+
 function draw() { // draw function
 
     clearCanvas(); // clearing the canvas
-    
+
     ctx.beginPath();
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "white";
@@ -497,10 +547,6 @@ function draw() { // draw function
     ctx.closePath();
 
     drawCheckeredBackground(myCanvas, gridSize, gridSize); // drawing the checkered background
-
-    drawBall(); // draw the ball
-
-    collisionCheck();
 
     // movement functions
     if (rightPressed) {
@@ -528,14 +574,14 @@ function draw() { // draw function
     for (i = 0; i < warnings.length; i++) {
         drawWarning(warnings[i].pad, warnings[i].time);
         warnings[i].time -= 1;
-        if (warnings[i].time < 0) {
-            
+        if (warnings[i].time == 0) {
+
             newObs(warnings[i].pad, 10);
             warnings.splice(i, 1);
         }
     }
 
-    drawObs(); // draw the obstacles
+
 
     // for-loop that runs through all obstacles and updates thier positions based on their velocities
     for (i = 0; i < obs.length; i++) {
@@ -546,15 +592,31 @@ function draw() { // draw function
         // if statement to remove obstacles once they go off the canvas
         if (obs[i].x < -100) {
             obs.splice(i, 1);
+            score+=1;
+            //console.log("removed obs");
         } else if (obs[i].x > canvas.width + 100) {
             obs.splice(i, 1);
+            score+=1;
+            //console.log("removed obs");
         } else if (obs[i].y < -100) {
             obs.splice(i, 1);
+            score+=1;
+            //console.log("removed obs");
         } else if (obs[i].y > canvas.width + 100) {
             obs.splice(i, 1);
+            score+=1;
+            //console.log("removed obs");
         }
 
     }
+    drawBall(); // draw the ball
+    drawObs(); // draw the obstacles
     collisionCheck();
-    requestAnimationFrame(draw);
+    updateLives();
+    if (isGameOver == false) {
+        requestAnimationFrame(draw);
+    } else {
+        gameOver();
+    }
 }
+
