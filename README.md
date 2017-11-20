@@ -1,5 +1,5 @@
 # Dodger
-##### Dodger is a game made in Javascript that I made while learning how to program through Javascript.
+#### Dodger is a game made in Javascript that I made while learning how to program through Javascript.
 
 [Play the game here!](https://alexweininger.github.io/dodging-game/)
 

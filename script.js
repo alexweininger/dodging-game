@@ -481,10 +481,6 @@ function updateLives() {
     if (lives <= 0) {
         isGameOver = true;
     }
-
-    if(score > 10){
-        gameDifficulty = 2;
-    }
 }
 
 var ran;
@@ -503,8 +499,10 @@ function startGame() {
     draw();
 }
 
+let gameSpeed = 1000 / gameDifficulty;
+
 do {
-    var timeInterval = 1000;
+    var timeInterval = gameSpeed;
     window.setInterval(function () {
         if (isGameRunning) {
             ran = randomNumber();
@@ -520,6 +518,7 @@ do {
                 console.log("add warning" + ran);
             }
         }
+        gameSpeed = 1000 / gameDifficulty;
     }, timeInterval);
 } while (isGameRunning);
 function resetVariables() {
@@ -531,6 +530,7 @@ function resetVariables() {
     y = (canvas.height / 2); // initial position y
     obs = [];
     warnings = [];
+    score = 0;
 
 }
 
@@ -568,6 +568,12 @@ function draw() { // draw function
     }
     drawPad(); // draw the pad after the locators
 
+    if(score > 10){
+        gameDifficulty = 2;
+    }
+    if(score > 25){
+        gameDifficulty = 3;
+    }
 
     drawLocator(gridX);
     drawLocator(gridX + (gridSize * 2));
